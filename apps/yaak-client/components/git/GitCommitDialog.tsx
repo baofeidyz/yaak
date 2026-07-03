@@ -42,10 +42,7 @@ interface CommitTreeNode {
 
 export function GitCommitDialog({ syncDir, onDone, workspace }: Props) {
   const callbacks = useGitCallbacks(syncDir);
-  const [{ status }, { commit, commitAndPush, add, unstage, restore }] = useGit(
-    syncDir,
-    callbacks,
-  );
+  const [{ status }, { commit, commitAndPush, add, unstage, restore }] = useGit(syncDir, callbacks);
   const [isPushing, setIsPushing] = useState(false);
   const [commitError, setCommitError] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
@@ -241,7 +238,7 @@ export function GitCommitDialog({ syncDir, onDone, workspace }: Props) {
               secondSlot={({ style: innerStyle }) => (
                 <div style={innerStyle} className="grid grid-rows-[minmax(0,1fr)_auto] gap-3 pb-2">
                   <Input
-                    className="!text-base font-sans rounded-md"
+                    className="text-base! font-sans rounded-md"
                     placeholder="Commit message..."
                     onChange={setMessage}
                     stateKey={null}
@@ -325,7 +322,7 @@ function TreeNodeChildren({
         )}
       >
         {isSelected && (
-          <div className="absolute -left-[100vw] right-0 top-0 bottom-0 bg-surface-active opacity-30 -z-10" />
+          <div className="absolute left-[-100vw] right-0 top-0 bottom-0 bg-surface-active opacity-30 -z-10" />
         )}
         <Checkbox
           checked={checked}
@@ -358,7 +355,7 @@ function TreeNodeChildren({
           {node.status.status !== "current" && (
             <InlineCode
               className={classNames(
-                "py-0 bg-transparent w-[6rem] text-center shrink-0",
+                "py-0 bg-transparent w-24 text-center shrink-0",
                 node.status.status === "modified" && "text-info",
                 node.status.status === "untracked" && "text-success",
                 node.status.status === "removed" && "text-danger",
@@ -400,7 +397,7 @@ function ExternalTreeNode({
   return (
     <Checkbox
       fullWidth
-      className="h-xs w-full hover:bg-surface-highlight rounded px-1 group"
+      className="h-xs w-full hover:bg-surface-highlight rounded-sm px-1 group"
       checked={entry.staged}
       onChange={() => onCheck(entry)}
       title={
@@ -409,7 +406,7 @@ function ExternalTreeNode({
           <div className="truncate">{entry.relaPath}</div>
           <InlineCode
             className={classNames(
-              "py-0 ml-auto bg-transparent w-[6rem] text-center",
+              "py-0 ml-auto bg-transparent w-24 text-center",
               entry.status === "modified" && "text-info",
               entry.status === "untracked" && "text-success",
               entry.status === "removed" && "text-danger",
@@ -511,13 +508,11 @@ function DiffPanel({
           size="2xs"
           variant="border"
           onClick={() => onDiscardChanges(entry)}
-        >Discard Changes</Button>
+        >
+          Discard Changes
+        </Button>
       </div>
-      <DiffViewer
-        original={prevYaml ?? ""}
-        modified={nextYaml ?? ""}
-        className="flex-1 min-h-0"
-      />
+      <DiffViewer original={prevYaml ?? ""} modified={nextYaml ?? ""} className="flex-1 min-h-0" />
     </div>
   );
 }
